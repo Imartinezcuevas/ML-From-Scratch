@@ -3,18 +3,16 @@ TODO: Unit tests for evaluation functions
 """
 
 import numpy as np
-import ml.evaluation import mean_squared_error, r2_score
+from ml.evaluation import mean_squared_error, r2_score
 
 def test_mse():
-    """
-    TODO:
-    - Test mse on a simple array
-    """
-    pass
+    y_true = np.array([1, 2, 3])
+    y_pred = np.array([1, 2, 3])
+    mse = mean_squared_error(y_true, y_pred)
+    assert mse == 0
 
 def test_r2():
-    """
-    TODO:
-    - Test r2_score on a simple dataset
-    """
-    pass
+    y_true = np.array([1, 2, 3])
+    y_pred = np.array([1, 2, 3])
+    r2 = r2_score(y_true, y_pred)
+    assert r2 == 1

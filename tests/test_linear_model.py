@@ -3,15 +3,15 @@ TODO: Unit tests for LinearRegression class
 """
 
 import numpy as np
-from ml.linear_model import LinearRegression
+from ml.models.linear_model import LinearRegression
 
 def test_fit_simple():
-    """
-    TODO:
-    - Test LinearRegression on a simple y = 2x + 3 dataset
-    - Check if models learns correct weights
-    """
-    pass
+    X = np.array([[0], [1], [2], [3]])
+    y = np.array([3, 5, 7, 9])
+    model = LinearRegression(lr=0.1, n_iters=1000)
+    model.fit(X, y)
+    assert np.isclose(model.W[0], 2, 0.1)
+    assert np.isclose(model.b, 3, 0.1)
 
 def test_predict_shape():
     """

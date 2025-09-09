@@ -2,18 +2,14 @@
 TODO: Functions to load datasets from scikit-learn for Linear Regression exercises
 """
 
+from sklearn.datasets import make_regression, load_boston
+
 def load_synthetic_regression(n_samples=100, n_features=1, noise=0.1, random_state=None):
-    """
-    TODO:
-    - Generate a synthetic regression dataset
-    - Return X, y as numpy arrays
-    """
-    pass
+    X, y = make_regression(n_samples=n_samples, n_features=n_features, noise=noise, random_state=random_state)
+    return X, y
 
 def load_bostom_dataset():
-    """
-    TODO:
-    - Load Bostom housing dataset from sklearn
-    - Return X, y as numpy arrays
-    """
-    pass
+    data = load_boston()
+    X = data.data
+    y = data.target
+    return X, y
