@@ -12,35 +12,41 @@ class LogisticRegression:
     def sigmoid(self, z):
         """
         TODO:
-        - Implementar la función sigmoide: 1 / (1 + exp(-z))
-        - Esto convierte la salida lineal en una probabilidad (0 a 1).
+        - Implement sigmoid function.
         """
         return 1 / (1 + np.exp(-z))
 
     def fit(self, X, y):
         """
         TODO:
-        - Inicializar pesos y bias
-        - Loop sobre n_iters:
-            - Calcular la combinación lineal (XW + b)
-            - Aplicar sigmoide → probabilidades
-            - Calcular pérdida (binary cross-entropy)
-            - Calcular gradientes
-            - Actualizar pesos y bias
+        - Initialize weights and bias
+        - Loop over n_iters:
+            - Compute linear predictions
+            - Apply sigmoid -> probabilities
+            - Compute loss
+            - Compute gradients
+            - Update weights and bias
         """
         self.n_samples, self.n_features = np.shape(X)
+        # 1. Initialize weights self.W as zeros of shape (n_features,)
         self.W = np.zeros(shape=(self.n_features,))
+        # 2. Initialize bias as zero
         self.b = 0
 
+        # 3. Loop over number of iterations
         for _ in range(self.n_iters):
+            # a. Compute predictions
             y_pred_proba = self.sigmoid(X.dot(self.W) + self.b)
 
+            # b. Compute loss and save it
             loss = binary_cross_entropy(y, y_pred_proba)
             self.loss_history.append(loss)
 
+            # c. Calculate gradients
             dW = (1/self.n_samples) * np.dot(X.T, (y_pred_proba - y))
             db = (1/self.n_samples) * np.sum(y_pred_proba - y)
 
+            # d. Update params
             self.W = self.W - self.lr*dW
             self.b = self.b - self.lr*db
 
@@ -48,15 +54,15 @@ class LogisticRegression:
     def predict_proba(self, X):
         """
         TODO:
-        - Retornar las probabilidades predichas usando la sigmoide.
+        - Return predicted probabilities using sigmoid.
         """
         return self.sigmoid(X.dot(self.W) + self.b)
 
     def predict(self, X):
         """
         TODO:
-        - Convertir las probabilidades en clases (0 o 1)
-        - Usa un umbral de 0.5
+        - Convert predicted probabilities to classes (0 and 1)
+        - Use threshold 0.5
         """
         y_pred_proba = self.predict_proba(X)
         return (y_pred_proba >= 0.5).astype(int)
