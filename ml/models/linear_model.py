@@ -13,8 +13,10 @@ class LinearRegression:
         self.W = None
         self.b = None 
         self.loss_history = []
+        self.params_history = []
+        self.test_loss_history = []
 
-    def fit(self, X, y):
+    def fit(self, X, y, X_val=None, y_val=None):
         """
         TODO:
         - Initialize weights and bias
@@ -45,6 +47,12 @@ class LinearRegression:
             # d. Compute and save the current loss
             loss = mean_squared_error(y, y_pred)
             self.loss_history.append(loss)
+            self.params_history.append((self.W.copy(), self.b))
+
+            if X_val is not None and y_val is not None:
+                y_pred_test = X_val.dot(self.W) + self.b
+                loss_test = mean_squared_error(y_val, y_pred_test)
+                self.test_loss_history.append(loss_test)
 
     def predict(self, X):
         """
