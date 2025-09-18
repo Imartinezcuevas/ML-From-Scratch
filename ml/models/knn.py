@@ -63,11 +63,18 @@ class KNNClassifier:
             - Perfom a mojority vote to determine the predicted class
         - Return an array with the predicted classes
         """
-        pass
-
-    def score(self, X, y):
-        """
-        TODO:
-        - Compute accuracy by comparing predicted labels with true labels
-        """
-        pass
+        labels = []
+        for x in X:
+            # Get the labels from the k_neighbors
+            k_nearest = self._get_neighbors(x)
+            # Count frequencies and find the label with the max count
+            counter = {}
+            maxfLabel = -1
+            maxf = 0
+            for k in k_nearest:
+                counter[k] = 1 + counter.get(k, 0)
+                if counter[k] > maxf:
+                    maxfLabel = k
+                    maxf = counter[k]
+            labels.append(maxfLabel)
+        return np.array(labels)
