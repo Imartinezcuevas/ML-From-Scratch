@@ -31,9 +31,9 @@ def recall(y_true, y_pred):
     return tp / (tp + fn)
 
 def f1(y_true, y_pred):
-    recall = recall(y_true, y_pred)
-    precision = precision(y_true, y_pred)
-    return (recall * precision) / (precision + recall)
+    recallV = recall(y_true, y_pred)
+    precisionV = precision(y_true, y_pred)
+    return (recallV * precisionV) / (precisionV + recallV)
 
 def binary_cross_entropy(y_true, y_pred, eps=1e-15):
     y_pred = np.clip(y_pred, eps, 1 - eps)
