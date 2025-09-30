@@ -1,6 +1,6 @@
 import numpy as np
 
-class DecisionTreeRegressor:
+class DecisionTreeClassifier:
     def __init__(self, max_depth=None, min_samples_split=2, max_features=None):
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
@@ -20,6 +20,7 @@ class DecisionTreeRegressor:
         Store tree build recursively using _build_tree
         """
         self.n_samples, self.n_features = X.shape
+        self.n_classes = len(np.unique(y))
         self.tree = self._build_tree(X, y)
 
     def _build_tree(self, X, y, depth=0):
@@ -38,13 +39,17 @@ class DecisionTreeRegressor:
             len(y) < self.min_samples_split or
             X.shape[0] < self.min_samples_split
         ):
-            leaf_value = np.mean(y)
+            leaf_value = np.bincount(y).argmax()
             return self.Node(value=leaf_value)
         
         if len(np.unique(y)) == 1:
             return self.Node(value=y[0])
 
         best_feature, best_threshold = self._find_best_split(X, y)
+        if best_feature is None:
+            leaf_value = np.bincount(y).argmax()
+            return self.Node(value=leaf_value)
+
 
         left_idx = X[:, best_feature] <= best_threshold
         right_idx = X[:, best_feature] > best_threshold 
@@ -70,8 +75,8 @@ class DecisionTreeRegressor:
             3. For each feature, loop over canditate thresholds. Threshold can be unique values or midpoints
             4. For each threshold:
                 - Split y into left and right subsets
-                - Compute weighted variance of left and right
-                - Compute score = weighted variance
+                - Compute gini of left and right
+                - Compute score = weighted gini
                 - If score < best_score, update best_feature, best_threshold, best_score
                 5. Return best_feature and best_threshold
         """
@@ -96,11 +101,19 @@ class DecisionTreeRegressor:
 
                 y_left = y[left_idx]
                 y_right = y[right_idx]
-                left_var =  np.var(y_left)
-                right_var = np.var(y_right)
+
                 n_left, n_right = len(y_left), len(y_right)
                 n_total = n_left + n_right
-                score = (n_left / n_total) * left_var + (n_right / n_total) * right_var
+
+                counts_left =  np.bincount(y_left, minlength=self.n_classes)
+                probs_left = counts_left / n_left
+                gini_left = 1 - np.sum(probs_left**2)
+                
+                counts_right = np.bincount(y_right, minlength=self.n_classes)
+                probs_right = counts_right / n_right
+                gini_right = 1 - np.sum(probs_right**2)
+
+                score = (n_left/n_total) * gini_left + (n_right/n_total) * gini_right
                 if score < best_score:
                     best_score = score
                     best_threshold = threshold
