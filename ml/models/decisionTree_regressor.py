@@ -32,7 +32,11 @@ class DecisionTreeRegressor:
             - Recursively build left and right nodes
             - Return Node with split info
         """
-        if depth >= self.max_depth or len(y) < self.min_samples_split or X.shape[0] < self.min_samples_split:
+        if (
+            (self.max_depth is not None and depth >= self.max_depth) or
+            len(y) < self.min_samples_split or
+            X.shape[0] < self.min_samples_split
+        ):
             leaf_value = np.mean(y)
             return self.Node(value=leaf_value)
         
@@ -116,7 +120,7 @@ class DecisionTreeRegressor:
         """
         if node.value is not None:
             return node.value
-        if x[node.feature] <= node.threshold:
+        if x[node.feature_index] <= node.threshold:
             return self._traverse_tree(x, node.left)
         else:
             return self._traverse_tree(x, node.right)
