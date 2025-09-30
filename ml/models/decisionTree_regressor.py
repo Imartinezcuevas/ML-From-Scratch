@@ -19,7 +19,7 @@ class DecisionTreeRegressor:
         Store tree build recursively using _build_tree
         """
         self.n_samples, self.n_features = X.shape
-        self.tree = None
+        self.tree = self._build_tree(X, y)
 
     def _build_tree(self, X, y, depth=0):
         """
@@ -32,7 +32,7 @@ class DecisionTreeRegressor:
             - Recursively build left and right nodes
             - Return Node with split info
         """
-        if depth >= self.max_depth or len(y) < self.min_samples_split:
+        if depth >= self.max_depth or len(y) < self.min_samples_split or X.shape[0] < self.min_samples_split:
             leaf_value = np.mean(y)
             return self.Node(value=leaf_value)
         
@@ -81,7 +81,7 @@ class DecisionTreeRegressor:
                 left_idx = X[:, feature] <= threshold
                 right_idx = X[:, feature] > threshold
 
-                if len(left_idx) == 0 or len(right_idx) == 0:
+                if np.sum(left_idx) == 0 or np.sum(right_idx) == 0:
                     continue
 
                 y_left = y[left_idx]
@@ -103,7 +103,10 @@ class DecisionTreeRegressor:
         TODO:
         - Transverse the tree for each sample using _traverse_tree
         """
-        pass
+        predictions = []
+        for x in X:
+            predictions.append(self._traverse_tree(x, self.tree))
+        return np.array(predictions)
 
     def _traverse_tree(self, x, node):
         """
@@ -111,4 +114,9 @@ class DecisionTreeRegressor:
         - If leaf node: return value
         - Otherwise, follow left or right child depending on the threshold
         """
-        pass
+        if node.value is not None:
+            return node.value
+        if x[node.feature] <= node.threshold:
+            return self._traverse_tree(x, node.left)
+        else:
+            return self._traverse_tree(x, node.right)
